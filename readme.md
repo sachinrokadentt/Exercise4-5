@@ -5,9 +5,9 @@
 <h3 align="left">Languages :</h3>
 <p align="left"> <a href="https://www.java.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-original.svg" alt="java" width="40" height="40"/> </a> </p>
 
-# Exercise1_2_3
+# Exercise4-5
 
-Exercise1_2_3 is Java Project which contain 3 exercise on java problems.
+Exercise4-5 is Java Project which contain 3 exercise on java problems.
 
 ## Installation
 
