@@ -8,7 +8,8 @@ public class Vehicle {
     private String startDate;
     private String endDate;
 
-    public Vehicle(){}
+    public Vehicle(){}//Default(Empty Constructor)
+    //ParameterizeConstructor for initializing members
     public Vehicle(long identificationCode, String brand, String model, int numberOfSeat, String licensePlate, String startDate, String endDate) {
         this.identificationCode = identificationCode;
         this.brand = brand;
@@ -18,7 +19,7 @@ public class Vehicle {
         this.startDate = startDate;
         this.endDate = endDate;
     }
-
+    //getter methods for variable
     public String getStartDate() {
         return startDate;
     }

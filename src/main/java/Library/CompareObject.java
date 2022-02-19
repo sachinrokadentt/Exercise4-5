@@ -1,7 +1,9 @@
 package Library;
-
 import java.util.Comparator;
 
+
+//Compare Author object by overriding compare method in Comparator<Author> interface.
+//By title.
 class TitleAscComparator implements Comparator<Author> {
     @Override
     public int compare(Author obj1, Author obj2) {
@@ -9,6 +11,8 @@ class TitleAscComparator implements Comparator<Author> {
     }
 }
 
+//Compare Author object by overriding compare method in Comparator<Author> interface.
+//By title.
 class RatingDescComparator implements Comparator<Author> {
     @Override
     public int compare(Author obj1, Author obj2) {
@@ -25,6 +29,9 @@ class RatingDescComparator implements Comparator<Author> {
 
     }
 }
+
+//Compare Author object by overriding compare method in Comparator<Author> interface.
+//By title.
 class YearDescComparator implements Comparator<Author> {
     @Override
     public int compare(Author obj1, Author obj2) {

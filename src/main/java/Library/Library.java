@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.Comparator;
 
-public class Library{
+public class Library{   // Separate class for (main method and logic) which access Book and Author class.
     private static Scanner sc=new Scanner(System.in);
     ArrayList<Author> author;
     public Library(){}
@@ -18,19 +18,26 @@ public class Library{
 
     public static void main(String[] args) throws FileNotFoundException {
         try {
+            //parsing a Books CSV file into scanner Object
             Scanner scanner = new Scanner(new File("src\\main\\resources\\Books.csv"));
             Library libraryObj = new Library();
             scanner.useDelimiter(",");
+
+            //local variable for taking csv content.
             String author;
             String title;
             String year;
             String rating;
             String lineInResultFile;
-            ArrayList<String> strarrayList = new ArrayList<>();
+
+            ArrayList<String> strarrayList = new ArrayList<>(); //store author name and count of each author in String Type arraylist
+            //arraylist of type class, which separately store books.csv file content
             ArrayList<Book> bookArrayList = new ArrayList<>();
-            ArrayList<Author> authorArrayList = new ArrayList<>();
+            ArrayList<Author> authorArrayList = new ArrayList<>();  //store authorName and Book class Object.
             String header = scanner.nextLine();
             int count = 0;
+
+            //Reading csv line by line using scanner.readline()
             while (scanner.hasNext()) {
                 count++;
                 lineInResultFile = scanner.nextLine();
@@ -41,16 +48,20 @@ public class Library{
                 rating = booksCSVArray[10];
                 bookArrayList.add(new Book(title, year, rating));
                 String authorArray[] = author.split(",");
+
+                //adding object of author class in arraylist named authorArrayList
                 for (int i = 0; i < authorArray.length; i++) {
                     authorArrayList.add(new Author(authorArray[i], new Book(title, year, rating)));
                 }
             }//while ends
 
-            //Composition Achieve
+            //Composition Achieve using author class which store Book class Object.
             Library library = new Library(authorArrayList);
             ArrayList<Author> libraryDetails = library.getAuthor();
             String c;
             int num;
+
+            //Preview message for feature implemented in program.
             do {
                 System.out.println("Enter choice:-\n"
                         + "1. List all books written by an author by alphabetical asc, publicationDate desc, rating desc\n"
@@ -60,6 +71,8 @@ public class Library{
                         + "5. Who is the most prolific author?\n");
                 int choice = sc.nextInt();
                 sc.nextLine();
+
+                //As per choice selected, call the feature implemented method.
                 switch (choice) {
                     case 1:
                         libraryObj.booksByOrder(libraryDetails);
@@ -77,6 +90,7 @@ public class Library{
                         libraryObj.prolificAuthor(libraryDetails, strarrayList);
                         break;
                     default:
+                        //if enter choice other than given.
                         System.out.println("Enter valid choice.");
                         break;
                 }
@@ -84,29 +98,33 @@ public class Library{
                 System.out.println("Do you want to continue. If yes enter 0. If not enter any key.");
                 num = sc.nextInt();
             }
-            while (num == 0);
+            while (num == 0); //Loop ends which displays choices.
 
         }
         catch (InputMismatchException i)
         {
             System.out.println("Input mismatched exception occurs enter valid data.");
-        }
+        }// Input exception get handled.
 
 
     }//Main method ends
 
 
 //methods for feature
+    //List of Book, ordered by title.
     public void booksByOrder(ArrayList<Author> libraryDetails)
     {
         System.out.println();
+        //Ordering the arrayList of type-class by year. Using comparator interface implemented by TitleAscComparator which has compare method.
         Collections.sort(libraryDetails,new TitleAscComparator());
         System.out.println("1. List all books written by an author.\n");
         System.out.println("1.1 List of all book based on Title(Alphabetical Order)");
         for (int index=0;index<libraryDetails.size();index++) {
-            System.out.println("AuthorName: "+libraryDetails.get(index).getName()
-                    +",TitleName: "+ libraryDetails.get(index).getBooks().getTitle());
+            System.out.println("AuthorName: " + libraryDetails.get(index).getName()
+                    + ",TitleName: " + libraryDetails.get(index).getBooks().getTitle());
         }
+
+        //Ordering the arrayList of type-class by year. Using comparator interface implemented by YearDescComparator which has compare method.
         Collections.sort(libraryDetails,new YearDescComparator());
         System.out.println("**************************************************************************");
         System.out.println("1.2 List of all book based on publication year(Desc order)");
@@ -115,6 +133,7 @@ public class Library{
                     +",TitleName: "+bk.getBooks().getTitle()
                     +", "+"Year: "+bk.getBooks().getYear());
         }
+        //Ordering the arrayList of type-class by rating. Using comparator interface implemented by RatingDescComparator which has compare method.
         Collections.sort(libraryDetails,new RatingDescComparator());
         System.out.println("\n**************************************************************************");
         System.out.println("1.3 List of all book based on rating(Desc Order)");
@@ -127,18 +146,20 @@ public class Library{
 
     }
 
-
+//By given bookName or title. Shows the list of author
     public void listOfAuthorByBookname(ArrayList<Author> libraryDetails)
     {int count;
         System.out.println();
         System.out.println("\n**************************************************************************");
         boolean flag=true;
-        System.out.println("2. Enter the input for Library.Library.Book Name, to display the List of Authors");
+        System.out.println("2. Enter the input for Book Name, to display the List of Authors");
         String bookName=sc.nextLine();
         count=1;
-        System.out.println("Library.Library.Author who write this book: "+bookName);
+        System.out.println("Author who write this book: "+bookName);
         for (int index=0;index<libraryDetails.size();index++) {
+            //check this book is available in library or not
             if(libraryDetails.get(index).getBooks().getTitle().equalsIgnoreCase(bookName)){
+                //if available, prints the name of author
                 System.out.println((count++)+" "+libraryDetails.get(index).getName());
                 flag=false;
             }
@@ -149,6 +170,7 @@ public class Library{
         }
     }
 
+    //Take userInput as author, Display countOfBooks written by author
     public void howManyBooks(ArrayList<Author> libraryDetails)
     {
         boolean flag=true;
@@ -160,11 +182,13 @@ public class Library{
         String authorName=sc.nextLine();
         count=0;
         for (int index=0;index<libraryDetails.size();index++) {
+            //check this authorName present  in library or not
             if(libraryDetails.get(index).getName().equalsIgnoreCase(authorName)){
-                count++;
+                count++;  //author is available, count by increment by one.
                 flag=false;
             }
         }
+        //print number of books written
         System.out.println("The countOfBooks, written by "+authorName+" is:"+count);
         if (flag)
         {
@@ -172,6 +196,7 @@ public class Library{
         }
     }
 
+    //accept year as userInput
     public void booksWrittenByYear(ArrayList<Author> libraryDetails) {
         boolean flag = true;
         int count;
@@ -181,8 +206,9 @@ public class Library{
         count=1;
         flag=true;
         System.out.println("Books written in year "+yearInput);
-        for (Author bk:libraryDetails) {
-            if(bk.getBooks().getYear()==yearInput){
+        for (Author bk:libraryDetails) { //iterate over author arraylist
+            if(bk.getBooks().getYear()==yearInput){  //check for exact year given
+                //print the name of book published in given year
                 System.out.println((count++)+" "+bk.getBooks().getTitle());
                 flag=false;
             }
@@ -193,6 +219,7 @@ public class Library{
         }
     }
 
+    //Displays the authorName and countOfBook published by author
     public void prolificAuthor(ArrayList<Author> libraryDetails, ArrayList<String> strarrayList) {
         boolean flag = true;
         int count;
@@ -201,30 +228,33 @@ public class Library{
         int countOfAuthor;
         String str;
         String []arr={};
+        //count how many times each author name is there in list.
         for(int indexI=0;indexI<libraryDetails.size();indexI++)
-        {   countOfAuthor=1;
+        {   countOfAuthor=1;                                       //Take first occurance of authorName
             String author1=libraryDetails.get(indexI).getName();
             for (int indexJ=indexI+1;indexJ<libraryDetails.size();indexJ++){
                 String author2=libraryDetails.get(indexJ).getName();
-                if(author1.equalsIgnoreCase(author2))
+                if(author1.equalsIgnoreCase(author2))              // check for same authorname
                 {
                     countOfAuthor++;
                 }
             }
+            //
             str=(Integer.toString(countOfAuthor))+","+author1;
+            //store author name and count of each author in String Type arraylist
             strarrayList.add(str);
         }
+
+        //order string arrayList by descending
         Collections.sort(strarrayList, new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 return o2.compareTo(o1);
             }
         });
+        //take first string from arrayList which has most prolific author
         arr=strarrayList.get(0).split(",");
         System.out.println("AuthorName: "+arr[1]+" is a prolific author. He has written "+arr[0]+" books");
-
-
-
 
 
 

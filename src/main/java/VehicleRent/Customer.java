@@ -13,7 +13,10 @@ import java.text.ParseException;
 public class Customer {
 
     public Customer(){}
+    //static scanner accessible outside main also
     static Scanner scannerObj=new Scanner(System.in);
+
+    //parsing a rental CSV file into scanner Object
     static Scanner fileReader;
 
     static {
@@ -24,6 +27,7 @@ public class Customer {
         }
     }
 
+    //file writer object to write data in rental.csv
     static FileWriter writer;
 
     static {
@@ -34,6 +38,7 @@ public class Customer {
         }
     }
 
+    //parsing a vehicle CSV file into scanner Object
     static Scanner fileReaderVehicle;
 
     static {
@@ -44,6 +49,7 @@ public class Customer {
         }
     }
 
+    //file writer object to write data in vehicle.csv
     static FileWriter writerVehicle;
 
     static {
@@ -53,12 +59,16 @@ public class Customer {
             e.printStackTrace();
         }
     }
+
+
     public static void main(String[] args) throws InputMismatchException {
         try{
-            ArrayList<Vehicle> vehicleArrayList=new ArrayList<>();
-            ArrayList<Rental> rentalArrayList=new ArrayList<>();
-            show(vehicleArrayList,rentalArrayList);
-            }
+            ArrayList<Vehicle> vehicleArrayList=new ArrayList<>(); //ArrayList for car-rental-fleet
+            ArrayList<Rental> rentalArrayList=new ArrayList<>();   //Store rented vehicle and customer data.
+
+            //Preview message for feature implemented in program with multiple choice
+            show(vehicleArrayList,rentalArrayList); //take ArrayList as parameter which has data required for car-rental-fleet and rented vehicle data.
+            }// All exception Handled
             catch (InputMismatchException i){
                 System.out.println("Input Mismatch Exception Occurs: Please enter input in correct return type");
 
@@ -72,7 +82,9 @@ public class Customer {
             }
     }// Main method ends
 
+    ////take ArrayList as parameter which has data required for car-rental-fleet and rented vehicle data.
     public static void show(ArrayList<Vehicle> vehicleArrayList,ArrayList<Rental> rentalArrayList) throws IOException, ParseException {
+        //local variable to take user input.
         String name;
         String vehicleName;
         long charges;
@@ -102,6 +114,7 @@ public class Customer {
         int number=scannerObj.nextInt();
         scannerObj.nextLine();
         int index;
+        //For implementing the multiple feature in choice
         switch (number)
         {
             case 0:
@@ -111,7 +124,7 @@ public class Customer {
 
             case 1:
                 checkVehicle(vehicleArrayList,rentalArrayList);
-
+//user input
                 System.out.println("Choice one: Enter customer Details");
                 System.out.println("Enter customer name:");
                 name=scannerObj.nextLine();
@@ -122,41 +135,50 @@ public class Customer {
                 startDate=scannerObj.nextLine();
                 System.out.println("Enter User End date for rent duration in (dd-mm-yyyy) date format:");
                 endDate=scannerObj.nextLine();
-                SimpleDateFormat sdf= new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat sdf= new SimpleDateFormat("dd-MM-yyyy"); //date format as string
                 Date userStartDate;
                 Date userEndDate;
                 userStartDate = sdf.parse(startDate);
                 userEndDate = sdf.parse(endDate);
                 flag=false;
-                for(index=0;index<vehicleArrayList.size();index++) {
+                //iterate over list,find exact vehicle name in list
+                for(index=0;index<vehicleArrayList.size();index++) { //take AvailableDate from list
                     Date availableStartDate = sdf.parse(vehicleArrayList.get(index).getStartDate());
                     Date availableEndDate = sdf.parse(vehicleArrayList.get(index).getEndDate());
+                    //check userDate is within Available date
+                    //check vehicle is available in list
                     if ((vehicleArrayList.get(index).getBrand().equalsIgnoreCase(vehicleName))&&(((userStartDate.getTime() - availableStartDate.getTime()) > 0) && ((availableEndDate.getTime() - userEndDate.getTime()) > 0))) {
                     flag=true;
+                    //if yes then continue with input
                     }
                 }
                 if(!flag)
-                {
+                {//invalid message
                     System.out.println("Enter valid vehicleName and Date.");
                     show(vehicleArrayList,rentalArrayList);
                     break;
                 }
                 Date date1=sdf.parse(startDate);
                 Date date2=sdf.parse(endDate);
+                //calculate day difference
                 long timeDifference = (date2.getTime() - date1.getTime());
                 long daysDifference = (timeDifference
                         / (1000 * 60 * 60 * 24))
                         % 365;
                 Rental r=new Rental();
+                //calculate charge or rent for vehicle as per days
                 charges=r.getRental(daysDifference);
                 for (index=0;index<vehicleArrayList.size();index++) {
+                    //iterate over list,find exact vehicle name in list
                     if(vehicleArrayList.get(index).getBrand().equalsIgnoreCase(vehicleName))
                     {
                         iCode=vehicleArrayList.get(index).getIdentificationCode();
                         model=vehicleArrayList.get(index).getModel();
                         numberOfSeat=vehicleArrayList.get(index).getNumberOfSeat();
                         licensePlate=vehicleArrayList.get(index).getLicensePlate();
+                        //given the vehicle on rent and remove it from car-rental-fleet
                         rentalArrayList.add(new Rental(name,vehicleName,iCode,model,numberOfSeat,licensePlate,startDate,endDate,charges,daysDifference));
+                        //print message for successful process.
                         System.out.println(vehicleArrayList.get(index).getBrand()+" is given on rent. Removed from car-rental-fleet. ");
                         vehicleArrayList.remove(index);
                         break;
@@ -169,6 +191,8 @@ public class Customer {
                 count=1;
                 flag=false;
                 System.out.println("Choice two:-Return of the vehicle to the car rental");
+                //check the list is empty or not
+                //if empty display message
                 for (Rental rental:rentalArrayList) {
                     System.out.println((count++)+" "+rental.getVehicleName());
                     flag=true;
@@ -178,11 +202,14 @@ public class Customer {
                     show(vehicleArrayList,rentalArrayList);
                     break;
                 }
-
+//take user data
                 flag=false;
                 System.out.println("Enter rented vehicleName given to customer. ");
                 vehicleName=scannerObj.nextLine();
+
+                //iterate over list,find exact vehicle name in list
                 for(index=0;index<rentalArrayList.size();index++){
+                    //iterate over list,find exact vehicle name in list
                     if(rentalArrayList.get(index).getVehicleName().equalsIgnoreCase(vehicleName))
                     {
                         iCode=rentalArrayList.get(index).getIdentificationCode();
@@ -192,7 +219,10 @@ public class Customer {
                         licensePlate=rentalArrayList.get(index).getLicensePlate();
                         startDate=rentalArrayList.get(index).getStartDate();
                         endDate=rentalArrayList.get(index).getEndDate();
+
+                        //add the vehicle again in car-rental-fleet list
                         vehicleArrayList.add(new Vehicle(iCode,vehicleName,model,numberOfSeat,licensePlate,startDate,endDate));
+                       //after adding,now remove it from rented list
                         rentalArrayList.remove(index);
                         flag=true;
                     }
@@ -212,9 +242,10 @@ public class Customer {
                 index=1;
                 flag=false;
                 System.out.println("Choice Three- The list of all vehicles belonging to the car rental Fleet");
+                //iterate over list, and display whole list
                 for (Vehicle vehicle:vehicleArrayList) {
                     System.out.println((index++)+" "+vehicle.getBrand()+" between "+vehicle.getStartDate()+" and "+vehicle.getEndDate()+" date range.");
-                    flag=true;
+                    flag=true; //check flag for list empty or not
                 }
                 if (!flag)
                 {
@@ -234,6 +265,8 @@ public class Customer {
                 sdf= new SimpleDateFormat("dd-MM-yyyy");
                 userStartDate = sdf.parse(startDate);
                 userEndDate = sdf.parse(endDate);
+
+                //check date, end should be bigger than start date
                 if((userEndDate.getTime()-userStartDate.getTime())<0)
                 {
                     System.out.println("Wrong date entered. Enter valid date range. Select choice again. ");
@@ -243,9 +276,13 @@ public class Customer {
                 flag=false;
                 for(index=0;index<vehicleArrayList.size();index++)
                 {
+                    //iterate over list, get all available date oneByone.
                     Date availableStartDate = sdf.parse(vehicleArrayList.get(index).getStartDate());
                     Date availableEndDate = sdf.parse(vehicleArrayList.get(index).getEndDate());
+
+                    //check userDate is within Available date
                     if((( userStartDate.getTime()-availableStartDate.getTime() )>0)&&((availableEndDate.getTime() - userEndDate.getTime())>0)){
+                       //print list of vehicle in within given user date
                         System.out.println((count++)+" "+vehicleArrayList.get(index).getBrand()+" is available between "+vehicleArrayList.get(index).getStartDate()+" and "+vehicleArrayList.get(index).getEndDate()+" date range.");
                         flag=true;
                     }
@@ -258,6 +295,8 @@ public class Customer {
                 break;
 
             case 5:
+                //Adding vehicle to car rental fleet
+                //take user input
                 System.out.println("Choice five: Adding a new vehicle to the car rental fleet.");
                 System.out.println("Enter Vehicle identification code(Digits):");
                 identificationCode=scannerObj.nextLong();
@@ -278,11 +317,14 @@ public class Customer {
                 sdf= new SimpleDateFormat("dd-MM-yyyy");
                 userStartDate = sdf.parse(startDate);
                 userEndDate = sdf.parse(endDate);
+                //check date, end should be bigger than start date
                 if((userEndDate.getTime()-userStartDate.getTime())<0)
                 {
                     System.out.println("Wrong date entered. Enter valid date range. Select choice again. ");
                     show(vehicleArrayList,rentalArrayList);
                 }
+
+                //add vehicle in arraylist by take Vehicle Object with userParameters
                 vehicleArrayList.add(new Vehicle(identificationCode,brand,model,numberOfSeat,licensePlate,startDate,endDate));
                 System.out.println("Vehicle added successfully");
                 System.out.println("Total number of vehicle in car rental fleet-"+vehicleArrayList.size());
@@ -294,10 +336,14 @@ public class Customer {
                 flag=false;
                 System.out.println("Enter vehicle name which you want to remove from car-rental-fleet. :");
                 vehicleName=scannerObj.nextLine();
+
                 for(index=0;index<vehicleArrayList.size();index++){
+                    //check user vehicleName in list
                     if(vehicleArrayList.get(index).getBrand().equalsIgnoreCase(vehicleName))
                     {
-                        vehicleArrayList.remove(index);
+                        // found vehicle name
+                        //take for loop index - get location of vehicle stored in list
+                        vehicleArrayList.remove(index); //Using remove(), delete the vehicle details from list
                         flag=true;
                     }
                 }
@@ -331,10 +377,12 @@ public class Customer {
                     licensePlate=vehicleArrayList.get(index).getLicensePlate();
                     startDate=vehicleArrayList.get(index).getStartDate();
                     endDate=vehicleArrayList.get(index).getEndDate();
+                    //write final content in list in vehicle csv after performing various operation
+                    //Date stored in ", " comma separated pattern
                     writerVehicle.write(iCode+ "," +brand+ "," +model+ "," +numberOfSeat+ "," +licensePlate+ "," +startDate+ "," +endDate+"\n");
                 }
                 writerVehicle.close();
-
+                //file writer object need to be close to write
                 while(fileReaderVehicle.hasNext())
                 {
                     String line=fileReaderVehicle.nextLine();
@@ -364,7 +412,11 @@ public class Customer {
                     endDate = rentalArrayList.get(index).getEndDate();
                     charges = rentalArrayList.get(index).getCharges();
                     daysDifference=rentalArrayList.get(index).getNumberOfDays();
+
+                    //write final content in list in rental csv after performing various operation
+                    //Date stored in ", " comma separated pattern
                     writer.write(name + "," + vehicleName + "," + model  + "," + iCode  + "," + numberOfSeat + "," + licensePlate  + "," + startDate + "," + endDate + "," + charges + "," + daysDifference + "\n");
+                    //file writer object need to be close to write
                     flag=true;
                 }
                 if (flag)
@@ -384,11 +436,13 @@ public class Customer {
                 writer.close();
                 writerVehicle.close();
                 flag=false;
+                //by iterate over loop. read csv line by line.
                 while(fileReader.hasNext())
                 {
                     String line=fileReader.nextLine();
-                    String[] rental=line.split(",");
+                    String[] rental=line.split(","); //separate in array by comma
                    // System.out.println(line);
+                    //print data in csv
                     System.out.println("CustomerName-"+rental[0]
                             +", VehicleRented-"+rental[1]
                             +", VehicleRented-"+rental[2]
@@ -412,15 +466,20 @@ public class Customer {
                 break;
 
             default:
+                //if enter choice other than given.
                 System.out.println("Please enter valid choice.");
+
+                //close all file reader, writer class.
                 writer.close();
                 fileReader.close();
                 writerVehicle.close();
                 writerVehicle.close();
 
+
         }
     }// Preview show method ends
 
+    //checkVehicle list is empty or not
     public static void checkVehicle(ArrayList<Vehicle> vehicleArrayList,ArrayList<Rental> rentalArrayList) throws IOException, ParseException {
         boolean flag=false;
         int index=1;
@@ -436,19 +495,19 @@ public class Customer {
 
         }
     }
+
+    //checkRentedCustomer list is empty or not
     public static void checkRentle(ArrayList<Vehicle> vehicleArrayList,ArrayList<Rental> rentalArrayList) throws IOException, ParseException {
         int count=1;
         boolean flag=false;
         System.out.println("Choice two:-Return of the vehicle to the car rental");
         for (Rental rental:rentalArrayList) {
-         //   System.out.println((count++)+" "+rental.getVehicleName());
-            flag=true;
+              flag=true;
             break;
         }
         if(!flag){
             System.out.println("No vehicle on rent yet. Empty List");
             show(vehicleArrayList,rentalArrayList);
-
         }
     }
 

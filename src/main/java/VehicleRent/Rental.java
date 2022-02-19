@@ -14,7 +14,7 @@ public class Rental
     private long numberOfDays;
 
 
-    public Rental(){}
+    public Rental(){}//Default(Empty Constructor)
     public Rental(String customerName, String vehicleName, long identificationCode, String model, int numberOfSeat, String licensePlate, String startDate, String endDate, long charges, long numberOfDays) {
         this.customerName = customerName;
         this.vehicleName = vehicleName;
@@ -28,6 +28,35 @@ public class Rental
         this.numberOfDays = numberOfDays;
     }
 
+    //calculate rent by numberOfDays
+    public long getRental(long numberOfDays) {
+        long rental;
+        if(numberOfDays<0)
+            rental=0;
+        else if(numberOfDays<=10)
+        {
+            rental=numberOfDays*700;
+        }
+        else if(numberOfDays<=30)
+        {
+            rental=numberOfDays*600;
+        }
+        else if(numberOfDays<=90)
+        {
+            rental=numberOfDays*550;
+        }
+        else if(numberOfDays<=365)
+        {
+            rental=numberOfDays*500;
+        }
+        else {
+            rental=numberOfDays*400;
+        }
+        return rental;
+    }
+
+
+    //getter methods for variable
     public String getModel() {
         return model;
     }
@@ -68,29 +97,5 @@ public class Rental
         return numberOfDays;
     }
 
-    public long getRental(long numberOfDays) {
-        long rental;
-        if(numberOfDays<0)
-            rental=0;
-        else if(numberOfDays<=10)
-        {
-            rental=numberOfDays*700;
-        }
-        else if(numberOfDays<=30)
-        {
-            rental=numberOfDays*600;
-        }
-        else if(numberOfDays<=90)
-        {
-            rental=numberOfDays*550;
-        }
-        else if(numberOfDays<=365)
-        {
-            rental=numberOfDays*500;
-        }
-        else {
-            rental=numberOfDays*400;
-        }
-        return rental;
-    }
+
 }
